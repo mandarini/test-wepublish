@@ -1,0 +1,39 @@
+deployment:
+  image: ghcr.io/wepublish/wepublish
+  imagePullPolicy: Always
+  imagePullSecret:
+  env:
+    API_URL: https://api
+    EDITOR_URL: https://editor
+    WEBSITE_URL: https://website
+    MEDIA_SERVER_URL: https://media
+
+api:
+  env:
+    GOOGLE_APPLICATION_CREDENTIALS: /var/secrets/google/key.json
+    DATABASE_URL: postgres://
+    MEDIA_SERVER_TOKEN: ''
+    JWT_SECRET_KEY: ''
+    SENTRY_DSN: ''
+  envFromSecretRefName:
+  properties: {}
+  replicaCount: 1
+
+editor:
+  env:
+    PEER_BY_DEFAULT: "true"
+  envFromSecretRefName:
+  properties: {}
+  replicaCount: 1
+
+website:
+  enabled: false
+  env:
+    NODE_ENV: production
+    HOST_ENV: production
+    ALLOWED_HOSTS: website
+  envFromSecretRefName:
+  properties: { }
+  replicaCount: 1
+
+labels: {}

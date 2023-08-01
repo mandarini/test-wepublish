@@ -1,0 +1,53 @@
+{{- $fullName := include "helm.fullname" . -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    app.kubernetes.io/name: {{ include "helm.name" . }}
+    helm.sh/chart: {{ include "helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- with .Values.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  rules:
+    {{- $apiUrl := urlParse .Values.deployment.env.API_URL }}
+    - host: {{ $apiUrl.host }}
+      http:
+        paths:
+          - path: {{ $apiUrl.path | default "/" }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullName }}-api
+                port:
+                  name: http
+
+
+    {{- $editorUrl := urlParse .Values.deployment.env.EDITOR_URL }}
+    - host: {{ $editorUrl.host }}
+      http:
+        paths:
+          - path: {{ $editorUrl.path | default "/" }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullName }}-editor
+                port:
+                  name: http
+
+{{- if .Values.website.enabled -}}
+    {{- $websiteUrl := urlParse .Values.deployment.env.WEBSITE_URL }}
+    - host: {{ $websiteUrl.host }}
+      http:
+        paths:
+          - path: {{ $websiteUrl.path | default "/" }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullName }}-website
+                port:
+                  name: http
+{{- end }}

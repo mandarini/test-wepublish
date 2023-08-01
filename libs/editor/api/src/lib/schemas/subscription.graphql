@@ -1,0 +1,97 @@
+fragment FullSubscription on Subscription {
+  id
+  createdAt
+  modifiedAt
+
+  user {
+    ...FullUser
+  }
+  memberPlan {
+    ...FullMemberPlan
+  }
+  paymentPeriodicity
+  monthlyAmount
+  autoRenew
+  startsAt
+  paidUntil
+  properties {
+    ...MetadataProperty
+  }
+  paymentMethod {
+    ...FullPaymentMethod
+  }
+  deactivation {
+    ...Deactivation
+  }
+}
+
+fragment Deactivation on SubscriptionDeactivation {
+  date
+  reason
+}
+
+query SubscriptionList(
+  $filter: SubscriptionFilter
+  $cursor: ID
+  $take: Int
+  $skip: Int
+  $order: SortOrder
+  $sort: SubscriptionSort
+) {
+  subscriptions(
+    filter: $filter
+    cursor: $cursor
+    take: $take
+    skip: $skip
+    order: $order
+    sort: $sort
+  ) {
+    nodes {
+      ...FullSubscription
+    }
+
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
+
+    totalCount
+  }
+}
+
+query Subscription($id: ID!) {
+  subscription(id: $id) {
+    ...FullSubscription
+  }
+}
+
+query SubscriptionsAsCsv($filter: SubscriptionFilter) {
+  subscriptionsAsCsv(filter: $filter)
+}
+
+mutation CreateSubscription($input: SubscriptionInput!) {
+  createSubscription(input: $input) {
+    ...FullSubscription
+  }
+}
+
+mutation UpdateSubscription($id: ID!, $input: SubscriptionInput!) {
+  updateSubscription(id: $id, input: $input) {
+    ...FullSubscription
+  }
+}
+
+mutation DeleteSubscription($id: ID!) {
+  deleteSubscription(id: $id) {
+    ...FullSubscription
+  }
+}
+
+query NewSubscribersPerMonth($months: Int!) {
+    newSubscribersPerMonth(monthsBack: $months) {
+        month
+        subscriberCount
+    }
+}

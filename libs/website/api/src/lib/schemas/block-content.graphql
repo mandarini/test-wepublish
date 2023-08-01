@@ -1,0 +1,156 @@
+fragment BlockWithoutTeaser on Block {
+  __typename
+
+  ... on TitleBlock {
+    title
+    lead
+  }
+
+  ... on ImageBlock {
+    caption
+    image {
+      ...FullImage
+    }
+  }
+
+  ... on ImageGalleryBlock {
+    images {
+      caption
+      image {
+        ...FullImage
+      }
+    }
+  }
+
+  ... on QuoteBlock {
+    quote
+    author
+  }
+
+  ... on RichTextBlock {
+    richText
+  }
+
+  ... on HTMLBlock {
+    html
+  }
+
+  ... on ListicleBlock {
+    items {
+      title
+      richText
+      image {
+        ...FullImage
+      }
+    }
+  }
+}
+
+fragment FullTeaser on Teaser {
+  ... on ArticleTeaser {
+    style
+
+    image {
+      ...FullImage
+    }
+
+    preTitle
+    title
+    lead
+
+    article {
+      ...ArticleWithoutBlocks
+
+      blocks {
+        ...BlockWithoutTeaser
+      }
+    }
+  }
+
+  ... on PeerArticleTeaser {
+    style
+
+    image {
+      ...FullImage
+    }
+
+    preTitle
+    title
+    lead
+
+    peer {
+      ...FullPeer
+    }
+
+    article {
+      ...ArticleWithoutBlocks
+
+      blocks {
+        ...BlockWithoutTeaser
+      }
+    }
+  }
+
+  ... on PageTeaser {
+    style
+
+    image {
+      ...FullImage
+    }
+
+    preTitle
+    title
+    lead
+
+    page {
+      ...PageWithoutBlocks
+
+      blocks {
+        ...BlockWithoutTeaser
+      }
+    }
+  }
+
+  ... on CustomTeaser {
+    style
+
+    image {
+      ...FullImage
+    }
+
+    preTitle
+    title
+    lead
+    contentUrl
+    properties {
+      key
+      value
+    }
+  }
+}
+
+fragment FullBlock on Block {
+  ...BlockWithoutTeaser
+
+  ... on TeaserGridFlexBlock {
+    flexTeasers {
+      alignment {
+        x
+        y
+        w
+        h
+      }
+
+      teaser {
+        ...FullTeaser
+      }
+    }
+  }
+
+  ... on TeaserGridBlock {
+    teasers {
+      ...FullTeaser
+    }
+    numColumns
+  }
+}
